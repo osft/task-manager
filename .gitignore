@@ -1,0 +1,26 @@
+## .NET
+bin/
+obj/
+*.user
+*.suo
+.vs/
+TestResults/
+
+## Logging (log4net rolling files)
+logs/
+src/TaskManager.Api/logs/
+
+## Environment
+.env
+
+## Node / Angular (Phase 7+)
+client/node_modules/
+client/dist/
+
+## OS
+Thumbs.db
+.DS_Store
+
+## IDE / tooling
+.cursor/plans/
+agent-transcripts/

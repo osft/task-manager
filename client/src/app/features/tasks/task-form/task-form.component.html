@@ -1,0 +1,78 @@
+<header class="page-header">
+  <div>
+    <p class="list-eyebrow">{{ isEdit() ? 'Edit' : 'Create' }}</p>
+    <h2>{{ isEdit() ? 'Update task' : 'New task' }}</h2>
+    <p>Define priority and due date — rules apply automatically at save.</p>
+  </div>
+  <a class="btn btn--ghost" routerLink="/tasks">← Back to board</a>
+</header>
+
+@if (loading()) {
+  <p class="state-message">Loading…</p>
+} @else {
+  @if (error()) {
+    <p class="form-error" role="alert">{{ error() }}</p>
+  }
+
+  <form class="task-form card" [formGroup]="form" (ngSubmit)="submit()" novalidate>
+    <label>
+      <span>Title</span>
+      <input type="text" formControlName="title" maxlength="200" placeholder="What needs to get done?" />
+      @if (form.controls.title.touched && form.controls.title.invalid) {
+        <small class="field-error">Title is required (max 200 characters).</small>
+      }
+    </label>
+
+    <label>
+      <span>Description</span>
+      <textarea formControlName="description" rows="4" maxlength="2000" placeholder="Optional details…"></textarea>
+    </label>
+
+    <div class="form-row">
+      <label>
+        <span>Priority</span>
+        <select formControlName="priority">
+          @for (p of priorities; track p) {
+            <option [value]="p">{{ p }}</option>
+          }
+        </select>
+      </label>
+
+      @if (isEdit()) {
+        <label>
+          <span>Status</span>
+          <select formControlName="statusId">
+            @for (s of statuses(); track s.id) {
+              <option [ngValue]="s.id">{{ s.name }}</option>
+            }
+          </select>
+        </label>
+      }
+    </div>
+
+    <div class="due-field">
+      <span class="due-field__label">Due date</span>
+      <app-datetime-picker
+        formControlName="dueDateLocal"
+        [min]="minDueLocal()"
+        [max]="maxDueLocal()"
+        placeholder="Pick a date and time"
+      />
+      <p class="due-hint" [class.due-hint--high]="priority() === 'High'">
+        {{ hint() }}
+        @if (isEdit()) {
+          <span class="due-hint__note">
+            Updates are validated against the original creation time.
+          </span>
+        }
+      </p>
+    </div>
+
+    <div class="form-actions">
+      <button class="btn btn--primary" type="submit" [disabled]="saving()">
+        {{ saving() ? 'Saving…' : isEdit() ? 'Save changes' : 'Create task' }}
+      </button>
+      <a class="btn btn--ghost" routerLink="/tasks">Cancel</a>
+    </div>
+  </form>
+}

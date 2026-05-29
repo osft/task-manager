@@ -1,0 +1,88 @@
+<div class="picker" [class.picker--open]="isOpen()" [class.picker--disabled]="disabled()">
+  <button
+    type="button"
+    class="picker__trigger"
+    (click)="toggle()"
+    [attr.aria-expanded]="isOpen()"
+    aria-haspopup="dialog"
+  >
+    <svg class="picker__icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <rect x="3" y="4" width="18" height="18" rx="2" stroke="currentColor" stroke-width="1.5" />
+      <path d="M3 9h18M8 2v4M16 2v4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+    </svg>
+    <span class="picker__value" [class.picker__value--empty]="!displayValue()">
+      {{ displayValue() || placeholder() }}
+    </span>
+    <svg class="picker__chevron" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+    </svg>
+  </button>
+
+  @if (isOpen()) {
+    <div class="picker__panel" role="dialog" aria-label="Choose date and time">
+      <div class="picker__calendar">
+        <div class="picker__nav">
+          <button type="button" class="picker__nav-btn" (click)="prevMonth()" aria-label="Previous month">
+            ‹
+          </button>
+          <span class="picker__month">{{ monthLabel() }}</span>
+          <button type="button" class="picker__nav-btn" (click)="nextMonth()" aria-label="Next month">
+            ›
+          </button>
+        </div>
+
+        <div class="picker__weekdays">
+          @for (wd of weekdays; track wd) {
+            <span>{{ wd }}</span>
+          }
+        </div>
+
+        <div class="picker__days">
+          @for (day of calendarDays(); track day.date.toISOString()) {
+            <button
+              type="button"
+              class="picker__day"
+              [class.picker__day--muted]="!day.inMonth"
+              [class.picker__day--selected]="isSelected(day)"
+              [class.picker__day--today]="isToday(day)"
+              [class.picker__day--disabled]="isDayDisabled(day)"
+              [disabled]="isDayDisabled(day)"
+              (click)="selectDay(day)"
+            >
+              {{ day.label }}
+            </button>
+          }
+        </div>
+      </div>
+
+      <div class="picker__time">
+        <span class="picker__time-label">Time</span>
+        <div class="picker__time-inputs">
+          <select
+            class="picker__select"
+            [value]="hour()"
+            (change)="hour.set(+$any($event.target).value); onTimeChange()"
+          >
+            @for (h of hourOptions; track h) {
+              <option [value]="h">{{ h.toString().padStart(2, '0') }}</option>
+            }
+          </select>
+          <span class="picker__time-sep">:</span>
+          <select
+            class="picker__select"
+            [value]="minute()"
+            (change)="minute.set(+$any($event.target).value); onTimeChange()"
+          >
+            @for (m of minuteOptions; track m) {
+              <option [value]="m">{{ m.toString().padStart(2, '0') }}</option>
+            }
+          </select>
+        </div>
+      </div>
+
+      <div class="picker__footer">
+        <button type="button" class="picker__done" (click)="close()">Done</button>
+      </div>
+    </div>
+  }
+</div>

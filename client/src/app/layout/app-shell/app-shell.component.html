@@ -1,0 +1,97 @@
+<div class="layout">
+  <aside class="sidebar">
+    <div class="sidebar__brand">
+      <span class="sidebar__logo" aria-hidden="true"></span>
+      <div>
+        <p class="sidebar__panel">Panel</p>
+        <h1 class="sidebar__title">Task Manager</h1>
+      </div>
+    </div>
+
+    <nav class="sidebar__nav" aria-label="Main">
+      <a
+        routerLink="/tasks"
+        routerLinkActive="is-active"
+        [routerLinkActiveOptions]="{ exact: true }"
+        class="sidebar__link"
+      >
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <rect x="3" y="3" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.5" />
+          <rect x="14" y="3" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.5" />
+          <rect x="3" y="14" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.5" />
+          <rect x="14" y="14" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.5" />
+        </svg>
+        Board
+      </a>
+      <a routerLink="/tasks/new" routerLinkActive="is-active" class="sidebar__link">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+        </svg>
+        New task
+      </a>
+    </nav>
+
+    @if (profile(); as user) {
+      <div class="sidebar__footer">
+        <div class="sidebar__user">
+          <span class="sidebar__avatar">{{ user.name.charAt(0) }}</span>
+          <div>
+            <span class="sidebar__user-name">{{ user.name }}</span>
+            <span class="sidebar__user-role">{{ user.roleName }}</span>
+          </div>
+        </div>
+        <button type="button" class="sidebar__logout" (click)="logout()">Close session</button>
+      </div>
+    }
+  </aside>
+
+  <div class="main">
+    <header class="topbar">
+      @if (profile(); as user) {
+        <div class="topbar__menu">
+          <button
+            type="button"
+            class="topbar__profile-btn"
+            (click)="toggleUserMenu()"
+            [attr.aria-expanded]="userMenuOpen()"
+            aria-haspopup="menu"
+          >
+            <div class="topbar__profile-text">
+              <span class="topbar__name">{{ user.name }}</span>
+              <span class="topbar__email">{{ user.email }}</span>
+            </div>
+            <span class="topbar__avatar">{{ user.name.charAt(0) }}</span>
+            <svg class="topbar__chevron" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+            </svg>
+          </button>
+
+          @if (userMenuOpen()) {
+            <div class="topbar__dropdown" role="menu">
+              <div class="topbar__dropdown-header">
+                <span class="topbar__dropdown-name">{{ user.name }}</span>
+                <span class="topbar__dropdown-role">{{ user.roleName }}</span>
+              </div>
+              <button type="button" class="topbar__dropdown-item" role="menuitem" (click)="logout()">
+                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path
+                    d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+                Close session
+              </button>
+            </div>
+          }
+        </div>
+      }
+    </header>
+
+    <main class="content">
+      <router-outlet />
+    </main>
+  </div>
+</div>

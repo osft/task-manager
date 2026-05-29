@@ -1,0 +1,55 @@
+<header class="page-header">
+  <div>
+    <p class="list-eyebrow">Your board</p>
+    <h2>Tasks</h2>
+    <p>Search, filter, and manage your workload.</p>
+  </div>
+  <a class="btn btn--primary" routerLink="/tasks/new">+ New task</a>
+</header>
+
+@if (loading()) {
+  <p class="state-message">Loading tasks…</p>
+} @else if (error()) {
+  <p class="form-error" role="alert">{{ error() }}</p>
+  <button class="btn btn--ghost" type="button" (click)="reload()">Retry</button>
+} @else if (tasks().length === 0) {
+  <div class="empty card">
+    <h3>No tasks yet</h3>
+    <p>Create your first task — priority rules apply automatically at save time.</p>
+    <a class="btn btn--primary" routerLink="/tasks/new">Create task</a>
+  </div>
+} @else {
+  <ul class="task-grid">
+    @for (task of tasks(); track task.id) {
+      <li class="task-card card" [class.task-card--high]="task.priority === 'High'">
+        <div class="task-card__top">
+          <app-priority-badge [priority]="task.priority" />
+          @if (task.statusName) {
+            <span class="status-pill">{{ task.statusName }}</span>
+          }
+        </div>
+
+        <h3 class="task-card__title">{{ task.title }}</h3>
+        @if (task.description) {
+          <p class="task-card__desc">{{ task.description }}</p>
+        }
+
+        <p class="task-card__due" [class]="dueClass(task)">
+          Due {{ formatDueDate(task.dueDate) }}
+        </p>
+
+        <div class="task-card__actions">
+          <a class="btn btn--ghost" [routerLink]="['/tasks', task.id, 'edit']">Edit</a>
+          <button
+            class="btn btn--danger"
+            type="button"
+            [disabled]="deletingId() === task.id"
+            (click)="remove(task)"
+          >
+            {{ deletingId() === task.id ? 'Deleting…' : 'Delete' }}
+          </button>
+        </div>
+      </li>
+    }
+  </ul>
+}
